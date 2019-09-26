@@ -5,6 +5,7 @@ const mkdirp = require('mkdirp');
 
 function readStaticCG (projectName, staticCGFile, scgJsonPath) {
     let allCalls = [];
+    mkdirp.sync(path.dirname(staticCGFile));
     // let scgJsonPath = path.join(__dirname, path.sep, 'output-actual', path.sep, projectName, path.sep, 'scg.json');
     // let staticCGFile = path.join(__dirname, path.sep, 'input', path.sep, projectName, path.sep, 'callgraph-static.txt');
     let staticCG = fs.readFileSync(staticCGFile, 'utf8');
