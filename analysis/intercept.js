@@ -4,7 +4,6 @@ const path = require('path');
 
 (function(sandbox){
     function DynCG() {
-        let callGraph = [];
         let uniqueCalls = []; // todo
         let callsiteStack = [];
         let iidToLocation = new Map();
@@ -16,9 +15,6 @@ const path = require('path');
             iid: -1,
             name: 'GraalVM'
         });
-
-        // let cg = new Map();
-        // let lastCallsite = undefined;
 
         function getLocation (iid) {
             return J$.iidToLocation(iid);
@@ -37,21 +33,11 @@ const path = require('path');
             if (uniqueCalls.includes(newCall)) {
                 return;
             }
-            // console.log(newCall);
             uniqueCalls.push(newCall);
-
-            // callGraph.push(newCall);
-            // logger.addEntry(newCall);
         }
-
-        // function addCallee(callsite, callee) {
-        // callsite = callsite === undefined ? "GraalVM" : callsite;
-        // cg.has(callsite) ? cg.get(callsite).add(callee) : cg.set(callsite, new Set([callee]));
-        // }
 
         this.invokeFunPre = function(iid, f, base, args, isConstructor, isMethod) {
             iidToLocation.set(iid, J$.iidToLocation(iid));
-            // lastCallsite = iid;
 
             callsiteStack.push({
                 iid: iid,
@@ -60,14 +46,12 @@ const path = require('path');
         };
 
         this.invokeFun = function (iid, f, base, args, result, isConstructor, isMethod) {
-            // lastCallsite = undefined;
             iidToLocation.set(iid, J$.iidToLocation(iid));
             callsiteStack.pop();
         };
 
         this.functionEnter = function (iid, func, receiver, args) {
             iidToLocation.set(iid, J$.iidToLocation(iid));
-            // addCallee(lastCallsite, iid);
             let callsite = callsiteStack[callsiteStack.length - 1];
 
             addCall(callsite, iid, func);
@@ -79,7 +63,6 @@ const path = require('path');
 
         this.endExecution = function() {
             console.log('end ' + uniqueCalls.length);
-            // logger.write(uniqueCalls);
             createCallGraphFromEdges();
         };
 

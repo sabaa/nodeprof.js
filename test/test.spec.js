@@ -46,37 +46,18 @@ function compareCallGraphs (staticCalls, dynamicCalls) {
     let stringDynamicCalls = {}, stringStaticCalls = {};
 
     dynamicCalls.forEach(dynamicCall => {
-        dynamicCall.caller.end = '';
+        dynamicCall.caller.end = ''; // todo
         dynamicCall.callee.end = '';
         stringDynamicCalls[JSON.stringify(dynamicCall)] = -1;
     });
 
     staticCalls.forEach(staticCall => {
-        staticCall.caller.end = '';
+        staticCall.caller.end = ''; // todo
         staticCall.callee.end = '';
         stringStaticCalls[JSON.stringify(staticCall)] = -1;
-        /*
-        stringStaticCalls[JSON.stringify({
-            caller: {
-                fileName: staticCall.caller.fileName,
-                start: staticCall.caller.start,
-                end: '' //staticCall.caller.end
-            },
-            callee: {
-                fileName: staticCall.callee.fileName,
-                start: staticCall.callee.start,
-                end: '' //staticCall.callee.end
-            }
-        })] = -1;
-        */
     });
 
-    // console.log(stringDynamicCalls);
-    // console.log('*********************');
-    // console.log(stringStaticCalls);
-
     let diffs = [];
-
     for (let dynamicCall in stringDynamicCalls) {
         if (typeof stringStaticCalls[dynamicCall] !== 'undefined') {
             // console.log(dynamicCall);
@@ -86,10 +67,5 @@ function compareCallGraphs (staticCalls, dynamicCalls) {
             diffs.push(JSON.parse(dynamicCall));
         }
     }
-
-    // console.log('*********************');
-    // console.log(stringDynamicCalls);
-
-    console.log(diffs);
     return diffs;
 }

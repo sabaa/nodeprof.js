@@ -6,10 +6,7 @@ const mkdirp = require('mkdirp');
 
 let Logger = function (outputPath) {
     this.outputPath = outputPath;
-    // let initialStr = '[' + eol;
     mkdirp.sync(path.basename(outputPath));
-    // fs.writeFileSync(this.outputPath, initialStr);
-    // this.currentDataLength = initialStr.length;
 };
 
 Logger.prototype.write = function (callGraph) {
