@@ -34,6 +34,7 @@ import ch.usi.inf.nodeprof.ProfiledTagEnum;
 import ch.usi.inf.nodeprof.jalangi.factory.BinaryFactory;
 import ch.usi.inf.nodeprof.jalangi.factory.ReturnFactory;
 import ch.usi.inf.nodeprof.jalangi.factory.BuiltinFactory;
+import ch.usi.inf.nodeprof.jalangi.factory.CFBlockFactory;
 import ch.usi.inf.nodeprof.jalangi.factory.ConditionalFactory;
 import ch.usi.inf.nodeprof.jalangi.factory.DeclareFactory;
 import ch.usi.inf.nodeprof.jalangi.factory.EvalFactory;
@@ -121,11 +122,18 @@ public class JalangiAnalysis {
             put("evalFunctionPost", EnumSet.of(BUILTIN));
 
             put("forObject", EnumSet.of(CF_ROOT));
+            put("forObjectPost", EnumSet.of(CF_ROOT));
+
+            put("cfBlockEnter", EnumSet.of(CF_BLOCK));
+            put("cfBlockExit", EnumSet.of(CF_BLOCK));
+
+            put("_return", EnumSet.of(CF_BRANCH));
 
             put("_return", EnumSet.of(CF_BRANCH));
 
             put("startExpression", EnumSet.of(EXPRESSION));
             put("endExpression", EnumSet.of(EXPRESSION));
+
         }
     });
 
@@ -271,21 +279,28 @@ public class JalangiAnalysis {
                             new EvalFunctionFactory(this.jsAnalysis, callbacks.get("evalFunctionPre"), callbacks.get("evalFunctionPost")));
         }
 
-        if (this.callbacks.containsKey("forObject")) {
+        if (this.callbacks.containsKey("forObject") || this.callbacks.containsKey("forObjectPost")) {
             this.instrument.onCallback(
                             ProfiledTagEnum.CF_ROOT,
-                            new ForObjectFactory(this.jsAnalysis, callbacks.get("forObject")));
+                            new ForObjectFactory(this.jsAnalysis, callbacks.get("forObject"), callbacks.get("forObjectPost")));
         }
 
         /**
-         * TODO
-         *
          * Loop not tested
          */
         if (this.callbacks.containsKey("loopEnter") || this.callbacks.containsKey("loopExit")) {
             this.instrument.onCallback(
                             ProfiledTagEnum.CF_ROOT,
                             new LoopFactory(this.jsAnalysis, callbacks.get("loopEnter"), callbacks.get("loopExit")));
+        }
+
+        /**
+         * cfBlockEnter, cfBlockExit
+         */
+        if (this.callbacks.containsKey("cfBlockEnter") || this.callbacks.containsKey("cfBlockExit")) {
+            this.instrument.onCallback(
+                            ProfiledTagEnum.CF_BLOCK,
+                            new CFBlockFactory(this.jsAnalysis, callbacks.get("cfBlockEnter"), callbacks.get("cfBlockExit")));
         }
 
         /**
