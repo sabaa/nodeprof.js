@@ -7,26 +7,30 @@ let runner = require('../analysis/run');
 let parseScg = require('./util/parse-scg');
 
 describe('tests', function () {
-    it('ExampleApplication', function () {
-        prepareCommand('ExampleApplication', 'main.js');
-    });
+    // it('ExampleApplication', function () {
+    //     prepareCommand('ExampleApplication', 'main.js');
+    // });
+
+    // it('razorpay-analysis', function () {
+    //     prepareCommand('razorpay-analysis', 'main.js');
+    // });
 
     // it('ExampleApplication2', function () {
     //     prepareCommand('ExampleApplication2', 'main.js');
     // });
 
-    // it('acorn', function () {
-    //     prepareCommand('acorn', path.join('test', 'run.js'));
-    // })
+    it('acorn', function () {
+        prepareCommand('acorn', path.join('test', 'run.js'));
+    })
 });
 
 function prepareCommand (projectName, mainFileName) {
     let mainFilePath = path.join(__dirname, 'input', projectName, mainFileName);
     let outputPath = path.join(__dirname, 'output-actual', 'dcg', projectName + '.json');
 
-    runner.run(mainFilePath, outputPath);
+    runner.run(mainFilePath, outputPath, projectName, analyzeCallGraphs);
 
-    analyzeCallGraphs(projectName, outputPath);
+    // analyzeCallGraphs(projectName, outputPath);
 }
 
 function analyzeCallGraphs (projectName, jsonDynamicCallGraphPath) {
