@@ -105,7 +105,7 @@ const path = require('path');
 
             return {
                 fileName: path.basename(filePath),
-                // fullPath: path.resolve(filePath),
+                fullPath: path.resolve(filePath),
                 // loc: {
                     start: start,
                     end: end
