@@ -6,7 +6,7 @@ const mkdirp = require('mkdirp');
 
 let Logger = function (outputPath) {
     this.outputPath = outputPath;
-    mkdirp.sync(path.basename(outputPath));
+    mkdirp.sync(path.dirname(outputPath));
 };
 
 Logger.prototype.write = function (callGraph) {
