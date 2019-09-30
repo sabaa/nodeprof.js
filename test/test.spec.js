@@ -7,28 +7,50 @@ let runner = require('../analysis/run');
 let parseScg = require('./util/parse-scg');
 
 describe('tests', function () {
-    // it('ExampleApplication', function () {
-    //     prepareCommand('ExampleApplication', 'main.js');
+    // it('memory-fs', function () {
+    //     prepareCommand('memory-fs', '__run-tests.js');
     // });
 
-    // it('razorpay-analysis', function () {
-    //     prepareCommand('razorpay-analysis', 'main.js');
-    // });
-
-    // it('ExampleApplication2', function () {
-    //     prepareCommand('ExampleApplication2', 'main.js');
+    // it('razorpay-node', function () {
+    //     prepareCommand('razorpay-node', '__run-tests.js');
     // });
 
     it('acorn', function () {
         prepareCommand('acorn', path.join('test', 'run.js'));
-    })
+    });
+
+    // it('node-abi', function () {
+    //     prepareCommand('node-abi', path.join('test', 'index.js'));
+    // });
+
+    // it('node-mkdirp', function () {
+    //     prepareCommand('node-mkdirp', '__run-tests.js');
+    // });
+
+    /*
+    it('ExampleApplication', function () {
+        prepareCommand('ExampleApplication', 'main.js');
+    });
+
+
+*/
+
+    // it('ExampleApplication2', function () {
+    //     prepareCommand('ExampleApplication2', 'main.js');
+    // });
 });
 
 function prepareCommand (projectName, mainFileName) {
     let mainFilePath = path.join(__dirname, 'input', projectName, mainFileName);
     let outputPath = path.join(__dirname, 'output-actual', 'dcg', projectName + '.json');
 
-    runner.run(mainFilePath, outputPath, projectName, analyzeCallGraphs);
+    // runner.run(mainFilePath, outputPath, projectName, analyzeCallGraphs);
+
+
+
+
+
+    analyzeCallGraphs(projectName, outputPath);
 
     // analyzeCallGraphs(projectName, outputPath);
 }
@@ -39,28 +61,72 @@ function analyzeCallGraphs (projectName, jsonDynamicCallGraphPath) {
 
     let staticCalls = parseScg(projectName, rawStaticCallGraphPath, jsonStaticCallGraphPath);
     let dynamicCalls = JSON.parse(fs.readFileSync(jsonDynamicCallGraphPath, 'utf8'));
+    // todo ooooooooooooooooooooooo
+    let dynamicCallsPruned = pruneDynamicCG(dynamicCalls);
+    // console.log(JSON.stringify(dynamicCallsPruned, null, 2));
+    // todo ooooooooooooooooooooooo
 
-    let diffs = compareCallGraphs(staticCalls, dynamicCalls);
+    // let diffs = compareCallGraphs(staticCalls, dynamicCalls);
+    let diffs = compareCallGraphs(staticCalls, dynamicCallsPruned);
     let diffPath = path.join(__dirname, 'output-actual', 'diff', projectName + '.json');
     mkdirp.sync(path.dirname(diffPath));
     fs.writeFileSync(diffPath, JSON.stringify(diffs, null, 2), 'utf8');
+}
+
+function pruneDynamicCG (dynamicCalls) {
+    let prunedCalls = [];
+    dynamicCalls.forEach(dCall => {
+        if (!(dCall.caller.fileName === '__run-tests.js') && !(dCall.callee.fileName === '__run-tests.js')) {
+            prunedCalls.push(dCall);
+        }
+    });
+    return prunedCalls;
 }
 
 function compareCallGraphs (staticCalls, dynamicCalls) {
     let stringDynamicCalls = {}, stringStaticCalls = {};
 
     dynamicCalls.forEach(dynamicCall => {
-        dynamicCall.caller.end = ''; // todo
-        dynamicCall.callee.end = '';
-        stringDynamicCalls[JSON.stringify(dynamicCall)] = -1;
+        // todo
+        // delete dynamicCall.caller.end;
+        // delete dynamicCall.callee.end;
+        // delete dynamicCall.caller.fullPath;
+        // delete dynamicCall.callee.fullPath;
+
+        let minimalDynamicCall = {
+            caller: {
+                fileName: dynamicCall.caller.fileName,
+                start: dynamicCall.caller.start
+            },
+            callee: {
+                fileName: dynamicCall.callee.fileName,
+                start: dynamicCall.callee.start
+            }
+        };
+
+        stringDynamicCalls[JSON.stringify(minimalDynamicCall/*dynamicCall*/)] = -1;
     });
 
     staticCalls.forEach(staticCall => {
-        staticCall.caller.end = ''; // todo
-        staticCall.callee.end = '';
-        stringStaticCalls[JSON.stringify(staticCall)] = -1;
+        // todo
+        // delete staticCall.caller.end;
+        // delete staticCall.callee.end;
+
+        let minimalStaticCall = {
+            caller: {
+                fileName: staticCall.caller.fileName,
+                start: staticCall.caller.start
+            },
+            callee: {
+                fileName: staticCall.callee.fileName,
+                start: staticCall.callee.start
+            }
+        };
+
+        stringStaticCalls[JSON.stringify(minimalStaticCall/*staticCall*/)] = -1;
     });
 
+    let diffIndecies = [];
     let diffs = [];
     for (let dynamicCall in stringDynamicCalls) {
         if (typeof stringStaticCalls[dynamicCall] !== 'undefined') {
