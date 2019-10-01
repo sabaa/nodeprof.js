@@ -7,51 +7,39 @@ let runner = require('../analysis/run');
 let parseScg = require('./util/parse-scg');
 
 describe('tests', function () {
-    // it('memory-fs', function () {
-    //     prepareCommand('memory-fs', '__run-tests.js');
-    // });
+    it('memory-fs', function () {
+        prepareCommand('memory-fs', '__run-tests.js');
+    });
 
-    // it('razorpay-node', function () {
-    //     prepareCommand('razorpay-node', '__run-tests.js');
-    // });
+    it('razorpay-node', function () {
+        prepareCommand('razorpay-node', '__run-tests.js');
+    });
 
     it('acorn', function () {
         prepareCommand('acorn', path.join('test', 'run.js'));
     });
 
-    // it('node-abi', function () {
-    //     prepareCommand('node-abi', path.join('test', 'index.js'));
-    // });
+    it('node-abi', function () {
+        prepareCommand('node-abi', path.join('test', 'index.js'));
+    });
 
-    // it('node-mkdirp', function () {
-    //     prepareCommand('node-mkdirp', '__run-tests.js');
-    // });
+    it('node-mkdirp', function () {
+        prepareCommand('node-mkdirp', '__run-tests.js');
+    });
 
     /*
     it('ExampleApplication', function () {
         prepareCommand('ExampleApplication', 'main.js');
     });
-
-
-*/
-
-    // it('ExampleApplication2', function () {
-    //     prepareCommand('ExampleApplication2', 'main.js');
-    // });
+    */
 });
 
 function prepareCommand (projectName, mainFileName) {
     let mainFilePath = path.join(__dirname, 'input', projectName, mainFileName);
     let outputPath = path.join(__dirname, 'output-actual', 'dcg', projectName + '.json');
 
-    // runner.run(mainFilePath, outputPath, projectName, analyzeCallGraphs);
-
-
-
-
-
-    analyzeCallGraphs(projectName, outputPath);
-
+    runner.run(mainFilePath, outputPath, projectName, analyzeCallGraphs);
+    // analyzeCallGraphs(projectName, outputPath);
     // analyzeCallGraphs(projectName, outputPath);
 }
 
@@ -61,12 +49,8 @@ function analyzeCallGraphs (projectName, jsonDynamicCallGraphPath) {
 
     let staticCalls = parseScg(projectName, rawStaticCallGraphPath, jsonStaticCallGraphPath);
     let dynamicCalls = JSON.parse(fs.readFileSync(jsonDynamicCallGraphPath, 'utf8'));
-    // todo ooooooooooooooooooooooo
     let dynamicCallsPruned = pruneDynamicCG(dynamicCalls);
-    // console.log(JSON.stringify(dynamicCallsPruned, null, 2));
-    // todo ooooooooooooooooooooooo
 
-    // let diffs = compareCallGraphs(staticCalls, dynamicCalls);
     let diffs = compareCallGraphs(staticCalls, dynamicCallsPruned);
     let diffPath = path.join(__dirname, 'output-actual', 'diff', projectName + '.json');
     mkdirp.sync(path.dirname(diffPath));
@@ -114,23 +98,20 @@ function compareCallGraphs (staticCalls, dynamicCalls) {
             }
         };
 
-        stringStaticCalls[JSON.stringify(minimalStaticCall/*staticCall*/)] = 1;
+        stringStaticCalls[JSON.stringify(minimalStaticCall)] = 1;
     });
 
     let diffIndecies = [];
-    // let diffs = [];
     for (let dynamicCall in stringDynamicCalls) {
         if (typeof stringStaticCalls[dynamicCall] !== 'undefined') {
-            // console.log(dynamicCall);
             stringDynamicCalls[dynamicCall] = -1;
         }
         else {
-            // diffs.push(JSON.parse(dynamicCall));
             diffIndecies.push(diffIndecies[dynamicCalls]);
         }
     }
-    let diffs = [];
 
+    let diffs = [];
     for (let i = 0; i < diffIndecies.length; i ++) {
         diffs.push(dynamicCalls[i]);
     }
