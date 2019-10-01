@@ -86,13 +86,8 @@ function pruneDynamicCG (dynamicCalls) {
 function compareCallGraphs (staticCalls, dynamicCalls) {
     let stringDynamicCalls = {}, stringStaticCalls = {};
 
-    dynamicCalls.forEach(dynamicCall => {
-        // todo
-        // delete dynamicCall.caller.end;
-        // delete dynamicCall.callee.end;
-        // delete dynamicCall.caller.fullPath;
-        // delete dynamicCall.callee.fullPath;
-
+    for (let i = 0; i < dynamicCalls.length; i ++) {
+        let dynamicCall = dynamicCalls[i];
         let minimalDynamicCall = {
             caller: {
                 fileName: dynamicCall.caller.fileName,
@@ -104,14 +99,10 @@ function compareCallGraphs (staticCalls, dynamicCalls) {
             }
         };
 
-        stringDynamicCalls[JSON.stringify(minimalDynamicCall/*dynamicCall*/)] = -1;
-    });
+        stringDynamicCalls[JSON.stringify(minimalDynamicCall)] = i;
+    }
 
     staticCalls.forEach(staticCall => {
-        // todo
-        // delete staticCall.caller.end;
-        // delete staticCall.callee.end;
-
         let minimalStaticCall = {
             caller: {
                 fileName: staticCall.caller.fileName,
@@ -123,19 +114,26 @@ function compareCallGraphs (staticCalls, dynamicCalls) {
             }
         };
 
-        stringStaticCalls[JSON.stringify(minimalStaticCall/*staticCall*/)] = -1;
+        stringStaticCalls[JSON.stringify(minimalStaticCall/*staticCall*/)] = 1;
     });
 
     let diffIndecies = [];
-    let diffs = [];
+    // let diffs = [];
     for (let dynamicCall in stringDynamicCalls) {
         if (typeof stringStaticCalls[dynamicCall] !== 'undefined') {
             // console.log(dynamicCall);
-            stringDynamicCalls[dynamicCall] = 1;
+            stringDynamicCalls[dynamicCall] = -1;
         }
         else {
-            diffs.push(JSON.parse(dynamicCall));
+            // diffs.push(JSON.parse(dynamicCall));
+            diffIndecies.push(diffIndecies[dynamicCalls]);
         }
     }
+    let diffs = [];
+
+    for (let i = 0; i < diffIndecies.length; i ++) {
+        diffs.push(dynamicCalls[i]);
+    }
+
     return diffs;
 }
