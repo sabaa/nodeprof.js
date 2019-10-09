@@ -29,18 +29,32 @@ for (let i = 0; i < 100/*diffs.length*/; i ++) {
     // console.log(diffCode);
 }
 
-fs.writeFileSync(diffVisPath, dom.serialize(), 'utf8');
+// fs.writeFileSync(diffVisPath, dom.serialize(), 'utf8');
 
 
 function createDiffCell (i) {
     let newRow = diffDoc.createElement('tr');
     let newCell = diffDoc.createElement('td');
     newCell.innerHTML = 'diff' + i;
-    newCell.id = 'diff' + i;
+    newCell.id = i; //'diff' + i;
     newCell.className = 'cell';
     newRow.appendChild(newCell);
     diffTable.appendChild(newRow);
 }
+
+// let diffsForVis = 'let __diffs = ' + JSON.stringify(diffs) + ';';
+// let diffsForVisPath = path.join(__dirname, 'vis', 'data', projectName + '.js');
+// fs.writeFileSync(diffsForVisPath, diffsForVis, 'utf8');
+
+/*
+let diffsScript = diffDoc.createElement('script');
+diffsScript.setAttribute('src', './data/acorn.js'); //path.join('.', 'data', projectName + '.js')); // todo
+diffsScript.onLoad = "alert('hi');";
+diffsScript.type = "text/javascript";
+diffDoc.head.appendChild(diffsScript);
+*/
+fs.writeFileSync(diffVisPath, dom.serialize(), 'utf8');
+
 
 function getCode (filePath, startLine, startCol, endLine, endCol) {
     let callerArray = fs.readFileSync(filePath, 'utf8').toString().split(eol);
@@ -64,7 +78,6 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
     return code;
 }
 
-
 function getCodeByLocation (diff) {
     let callerPath = diff.caller.fullPath;
 
@@ -74,6 +87,7 @@ function getCodeByLocation (diff) {
     let callerEndCol = Number(diff.caller.end.column) - 1;
 
     let callsiteCode = getCode(callerPath, callerStartLine, callerStartCol, callerEndLine, callerEndCol);
+    diff.caller.code = callsiteCode;
 
 
     let calleePath = diff.callee.fullPath;
@@ -84,7 +98,7 @@ function getCodeByLocation (diff) {
     let calleeEndCol = Number(diff.callee.end.column) - 1;
 
     let calleeCode = getCode(calleePath, calleeStartLine, calleeStartCol, calleeEndLine, calleeEndCol);
-
+    diff.callee.code = calleeCode;
 
     /*
     let callerArray = fs.readFileSync(callerPath, 'utf8').toString().split(eol);
@@ -142,3 +156,8 @@ function getCodeByLocation (diff) {
 }
 
 // console.log(diffs.length);
+
+
+let diffsForVis = 'let __diffs = ' + JSON.stringify(diffs) + ';';
+let diffsForVisPath = path.join(__dirname, 'vis', 'data', projectName + '.js');
+fs.writeFileSync(diffsForVisPath, diffsForVis, 'utf8');

@@ -2,9 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>callee</title>
+    <title>Caller</title>
+    <link rel="stylesheet" href="lib/highlight/styles/default.css">
+    <script src="lib/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script>
+        window.addEventListener('message', function(event) {
+            console.log(event.data);
+            document.getElementById('__code').innerHTML = event.data;
+        });
+
+    </script>
+
 </head>
-<body>
+
+<div class="container">
+<pre><code class="javascript" id="__code">
+    function foo () {
+
+    }
+</code></pre>
+</div>
+
+<script>
+    function foo () {
+        document.getElementById('__code').innerHTML = "function bar () {}";
+        hljs.highlightBlock(document.getElementById('__code'));
+    }
+    setTimeout(foo, 1000);
+</script>
 
 </body>
 </html>
