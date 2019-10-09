@@ -22,10 +22,28 @@
             }
         });
 
+        function getHighlightedCode (filePath, startIndex, endIndex) {
+            let fileContent = __files[filePath];
+            let newContent = '';
+            if (startIndex > 0) {
+                newContent += fileContent.substring(0, startIndex - 1);
+            }
+            newContent += '<mark>';
+            newContent += fileContent.substring(startIndex, endIndex);
+            newContent += '</mark>';
+            if (endIndex < fileContent.length - 1) {
+                newContent += fileContent.substring(endIndex + 1, fileContent.length - 1);
+            }
+
+            return newContent;
+        }
+
         function handleClickOnCell (diff) {
+            console.log(__files.length);
 
             let callerFrame = window.frames['callerFrame'];
-            let message = diff.caller.code;
+//            let message = diff.caller.code;
+            let message = getHighlightedCode(diff.caller.fullPath, diff.caller.startIndex, diff.caller.endIndex);
             callerFrame.contentWindow.postMessage(message, '*');
 
             let calleeFrame = window.frames['calleeFrame'];
@@ -85,12 +103,12 @@
     </div>
 
     <div class="box">
-        <iframe src="./callsite.html" id="callerFrame" frameborder="0" scrolling="no" width="100%" height="512" align="left">
+        <iframe src="./callsite.html" id="callerFrame" frameborder="0" scrolling="auto" width="512" height="512" align="left">
         </iframe>
     </div>
 
     <div class="box">
-        <iframe src="./callee.html" id="calleeFrame" frameborder="0" scrolling="no" width="100%" height="512" align="right">
+        <iframe src="./callee.html" id="calleeFrame" frameborder="0" scrolling="auto" width="512" height="512" align="right">
         </iframe>
     </div>
 

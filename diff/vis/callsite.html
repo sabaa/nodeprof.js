@@ -11,6 +11,7 @@
         window.addEventListener('message', function(event) {
             console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
+            hljs.highlightBlock(document.getElementById('__code'));
             /*
             if (~event.origin.indexOf('cg-diff.html')) {
                 // The data has been sent from your site
@@ -38,11 +39,11 @@
 </div>
 
 <script>
-    function foo () {
-        document.getElementById('__code').innerHTML = "function bar () {}";
-        hljs.highlightBlock(document.getElementById('__code'));
-    }
-    setTimeout(foo, 1000);
+//    function foo () {
+//        document.getElementById('__code').innerHTML = "function bar () {}";
+//        hljs.highlightBlock(document.getElementById('__code'));
+//    }
+//    setTimeout(foo, 1000);
 </script>
 
 <script>
