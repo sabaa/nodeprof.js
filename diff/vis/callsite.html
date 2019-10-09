@@ -9,7 +9,7 @@
 
     <script>
         window.addEventListener('message', function(event) {
-            console.log(event.data);
+//            console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
             hljs.highlightBlock(document.getElementById('__code'));
             /*

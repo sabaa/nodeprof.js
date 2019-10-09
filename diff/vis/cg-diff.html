@@ -16,13 +16,18 @@
     <script>
         document.addEventListener('click', (e) => {
             if (e.target && e.target.className === 'cell') {
-                console.log(e.target.id);
-                console.log(__diffs[e.target.id]);
+//                console.log(e.target.id);
+//                console.log(__diffs[e.target.id]);
                 handleClickOnCell(__diffs[e.target.id]);
             }
         });
 
-        function getHighlightedCode (filePath, startIndex, endIndex) {
+        function getHighlightedCode_old (filePath, startIndex, endIndex) {
+            console.log(filePath);
+            console.log(startIndex);
+            console.log(endIndex);
+
+
             let fileContent = __files[filePath];
             let newContent = '';
             if (startIndex > 0) {
@@ -38,12 +43,54 @@
             return newContent;
         }
 
+        function getHighlightedCode (filePath, lines) {
+            console.log(filePath);
+            console.log(lines);
+
+
+            let fileContent = __files[filePath].split('\n');
+            let newContent = '';
+
+            console.log('------ ' + 0 + ' >>> ' + lines[0]);
+            for (let i = 0; i < lines[0]; i ++) {
+                newContent += (fileContent[i] + '\n');
+            }
+
+            console.log('------ ' + lines[0] + ' >>> ' + lines[lines.length - 1]);
+            for (let i = 0; i < lines.length; i ++) {
+                let lineIndex = lines[i];
+//                fileContent[lineIndex] = '<mark>' + fileContent[lineIndex] + '</mark>';
+                newContent = newContent + '<mark>' + fileContent[lineIndex] + '</mark>' + '\n';
+            }
+
+            console.log(fileContent.length);
+            if (lines[lines.length - 1] + 1 < fileContent.length) {
+                console.log('>>>>');
+                console.log(lines[lines.length - 1] + 1);
+                let lastHighlightedLine = lines[lines.length - 1] + 1;
+                console.log('------ ' + lastHighlightedLine + ' >>> ' + (fileContent.length - 1));
+                let maxLineShown = fileContent.length - lastHighlightedLine > 20 ? lastHighlightedLine + 20 : fileContent.length;
+                for (let i = lastHighlightedLine/*(lines[lines.length - 1] + 1)*/; i < maxLineShown/*fileContent.length*/; i ++) {
+                    console.log(i);
+                    newContent += (fileContent[i] + '\n');
+                }
+            }
+
+            console.log('__________________');
+            console.log(newContent);
+            console.log('__________________***');
+
+//            return fileContent;
+            return newContent;
+        }
+
         function handleClickOnCell (diff) {
-            console.log(__files.length);
+//            console.log(__files.length);
 
             let callerFrame = window.frames['callerFrame'];
 //            let message = diff.caller.code;
-            let message = getHighlightedCode(diff.caller.fullPath, diff.caller.startIndex, diff.caller.endIndex);
+//            let message = getHighlightedCode(diff.caller.fullPath, diff.caller.startIndex, diff.caller.endIndex);
+            let message = getHighlightedCode(diff.caller.fullPath, diff.caller.highlightLines);
             callerFrame.contentWindow.postMessage(message, '*');
 
             let calleeFrame = window.frames['calleeFrame'];

@@ -88,14 +88,22 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
     let subStrStartIndex = -1, subStrEndIndex = -1;
     let indexCounter = 0;
 
+    let highlightedLines = [];
+
     for (let i = startLineItr; i <= endLine; i ++) {
+        console.log(i);
+        highlightedLines.push(i);
+
+
         let line = callerArray[i].split('');
         for (let j = startColItr; j < line.length; j ++) {
             if (i === startLine && j === startCol) {
                 subStrStartIndex = indexCounter;
+                console.log('start: ' + subStrStartIndex);
             }
             if (i === endLine && j === endCol) {
                 subStrEndIndex = indexCounter;
+                console.log('end: ' + subStrEndIndex);
             }
 
             if (i === endLine && j > endCol) {
@@ -113,7 +121,8 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
     return {
         code: code,
         startIndex: subStrEndIndex,
-        endIndex: subStrEndIndex
+        endIndex: subStrEndIndex,
+        highlightLines: highlightedLines
     };
 }
 
@@ -129,6 +138,7 @@ function getCodeByLocation (diff) {
     diff.caller.code = callsiteCode.code;
     diff.caller.startIndex = callsiteCode.startIndex;
     diff.caller.endIndex = callsiteCode.endIndex;
+    diff.caller.highlightLines = callsiteCode.highlightLines;
 
     let calleePath = diff.callee.fullPath;
 
@@ -141,6 +151,7 @@ function getCodeByLocation (diff) {
     diff.callee.code = calleeCode.code;
     diff.callee.startIndex = calleeCode.startIndex;
     diff.callee.endIndex = calleeCode.endIndex;
+    diff.callee.highlightLines = calleeCode.highlightLines;
 
     /*
     let callerArray = fs.readFileSync(callerPath, 'utf8').toString().split(eol);
