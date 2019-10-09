@@ -94,7 +94,8 @@
             callerFrame.contentWindow.postMessage(message, '*');
 
             let calleeFrame = window.frames['calleeFrame'];
-            message = diff.callee.code;
+//            message = diff.callee.code;
+            message = getHighlightedCode(diff.callee.fullPath, diff.callee.highlightLines);
             calleeFrame.contentWindow.postMessage(message, '*');
 
 //            getCodeByLocation(diff);
