@@ -49,7 +49,7 @@ function getSourceInfo (src) {
     let endLoc = sourceDetails[4].split(',');
 
     return {
-        fileName: sourceDetails[0],
+        fullPath: sourceDetails[0],
         start: {
             line: startLoc[0],
             column: startLoc[1]
@@ -68,7 +68,7 @@ function getTargetInfo (trgt) {
     let endLoc = targetDetails[4].split(',');
 
     return {
-        fileName: targetDetails[0],
+        fullPath: targetDetails[0],
         start: {
             line: startLoc[0],
             column: startLoc[1]

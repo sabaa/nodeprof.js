@@ -9,30 +9,11 @@
 
     <script>
         window.addEventListener('message', function(event) {
-//            console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
             hljs.highlightBlock(document.getElementById('__code'));
-
-//            document.scrollTop(300);
-//            window.scrollTo(0, window.outerWidth);
             window.scrollTo(0, document.getElementById('__code').scrollHeight);
-
-            /*
-            if (~event.origin.indexOf('cg-diff.html')) {
-                // The data has been sent from your site
-
-                // The data sent with postMessage is stored in event.data
-                console.log(event.data);
-            } else {
-                // The data hasn't been sent from your site!
-                // Be careful! Do not use it.
-                return;
-            }
-            */
         });
-
     </script>
-
 </head>
 
 <div class="container">
@@ -41,18 +22,6 @@
     }
 </code></pre>
 </div>
-
-<script>
-/*
-    var urlParams = new URLSearchParams(window.location.search);
-    var __script;
-    if (urlParams.has('script')) {
-        __script = urlParams.get('script');
-        console.log('********');
-//        document.getElementById('__code').innerHTML = __script;
-    }
-*/
-</script>
 
 </body>
 </html>

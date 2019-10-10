@@ -8,17 +8,13 @@ const diffsTemplate = fs.readFileSync(diffVisPath, 'utf8');
 const dom = new JSDOM(diffsTemplate);
 const diffDoc = dom.window.document;
 
-
 // todo
 let projectName = 'acorn';
 // todo
 let diffFilePath = path.join(__dirname, '..', 'test', 'output-actual', 'diff', projectName + '.json');
 
 let diffs = JSON.parse(fs.readFileSync(diffFilePath, 'utf8'));
-// diffs.files = [];
 let diffFiles = {};
-
-let displayedDiffs = [];
 
 let diffTable = diffDoc.getElementById('diffTable');
 // diffTable.innerHTML = '';
@@ -27,14 +23,8 @@ diffTableBody.innerHTML = '';
 
 for (let i = 0; i < diffs.length; i ++) {
     createDiffCell(i);
-
-    let diffCode = getCodeByLocation(diffs[i]);
-
-    // console.log(diffCode);
+    getCodeByLocation(diffs[i]);
 }
-
-// fs.writeFileSync(diffVisPath, dom.serialize(), 'utf8');
-
 
 function createDiffCell (i) {
     let newRow = diffDoc.createElement('tr');
@@ -47,17 +37,6 @@ function createDiffCell (i) {
     diffTableBody.appendChild(newRow);
 }
 
-// let diffsForVis = 'let __diffs = ' + JSON.stringify(diffs) + ';';
-// let diffsForVisPath = path.join(__dirname, 'vis', 'data', projectName + '.js');
-// fs.writeFileSync(diffsForVisPath, diffsForVis, 'utf8');
-
-/*
-let diffsScript = diffDoc.createElement('script');
-diffsScript.setAttribute('src', './data/acorn.js'); //path.join('.', 'data', projectName + '.js')); // todo
-diffsScript.onLoad = "alert('hi');";
-diffsScript.type = "text/javascript";
-diffDoc.head.appendChild(diffsScript);
-*/
 fs.writeFileSync(diffVisPath, dom.serialize(), 'utf8');
 
 function getCode (filePath, startLine, startCol, endLine, endCol) {
@@ -67,23 +46,7 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
     if (typeof diffFiles[filePath] === 'undefined') {
         diffFiles[filePath] = fileContent;
     }
-    /*
-    let fileExists = false;
-    for (let f in diffFiles) {
-        if (diffFiles[f].filePath === filePath) {
-            fileExists = true;
-        }
-    }
-    if (!fileExists) {
-        diffFiles.push({
-            filePath: filePath,
-            content: fileContent
-        });
-        console.log(diffFiles.length);
-    }
-    */
 
-    // let withinScopt = false;
     let code = '';
 
     let startLineItr = startLine;
@@ -160,69 +123,10 @@ function getCodeByLocation (diff) {
     diff.callee.startIndex = calleeCode.startIndex;
     diff.callee.endIndex = calleeCode.endIndex;
     diff.callee.highlightLines = calleeCode.highlightLines;
-
-    /*
-    let callerArray = fs.readFileSync(callerPath, 'utf8').toString().split(eol);
-    // let withinScopt = false;
-    let callsiteCode = '';
-
-    let startLineItr = callerStartLine;
-    let startColItr = callerStartCol;
-
-    for (let i = startLineItr; i <= callerEndLine; i ++) {
-        let line = callerArray[i].split('');
-        for (let j = startColItr; j < line.length; j ++) {
-            if (i === callerEndLine && j > callerEndCol) {
-                break;
-            }
-            callsiteCode += line[j];
-        }
-    }
-    *
-    /*
-    for (let i in callerArray) {
-        if (i >= callerStartLine) {
-            if (i <= callerEndLine) {
-                // console.log('<< ' + callerStartLine + ' < ' + i + ' > ' + callerEndLine + ' >>');
-                let line = callerArray[i];
-                let splitLine = line.split('');
-                for (let j = 0; j < splitLine.length; j ++) {
-                    if (i === callerStartLine && j >= callerStartCol
-                        || i === callerEndLine && j <= callerEndCol
-                        || i > callerStartCol && i < callerEndLine) {
-
-                        callsiteCode += splitLine[j];
-                    }
-                    // else {
-                    //     break;
-                    // }
-                }
-                // console.log(line);
-                // console.log(typeof line);
-                // for (let j = )
-            }
-            else {
-                break;
-            }
-        }
-    }
-    */
-    // if (callsiteCode.length > 1) {
-    //     console.log(callsiteCode);
-    //     console.log('\n');
-    // }
-    // console.log(callsiteCode);
-
-
 }
-
-// console.log(diffs.length);
-
 
 let diffsForVis = 'let __diffs = ' + JSON.stringify(diffs) + ';';
 diffsForVis += eol;
 diffsForVis = diffsForVis + 'let __files = ' + JSON.stringify(diffFiles);
-// console.log(JSON.stringify(diffs, null, 2));
-// console.log('============== ' + diffs.files.length);
 let diffsForVisPath = path.join(__dirname, 'vis', 'data', projectName + '.js');
 fs.writeFileSync(diffsForVisPath, diffsForVis, 'utf8');

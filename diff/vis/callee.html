@@ -9,15 +9,11 @@
 
     <script>
         window.addEventListener('message', function(event) {
-//            console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
             hljs.highlightBlock(document.getElementById('__code'));
-
             window.scrollTo(0, document.getElementById('__code').scrollHeight);
         });
-
     </script>
-
 </head>
 
 <div class="container">
