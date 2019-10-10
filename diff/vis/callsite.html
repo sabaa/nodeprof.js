@@ -12,6 +12,11 @@
 //            console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
             hljs.highlightBlock(document.getElementById('__code'));
+
+//            document.scrollTop(300);
+//            window.scrollTo(0, window.outerWidth);
+            window.scrollTo(0, document.getElementById('__code').scrollHeight);
+
             /*
             if (~event.origin.indexOf('cg-diff.html')) {
                 // The data has been sent from your site
@@ -33,18 +38,9 @@
 <div class="container">
 <pre><code class="javascript" id="__code">
     function foo () {
-
     }
 </code></pre>
 </div>
-
-<script>
-//    function foo () {
-//        document.getElementById('__code').innerHTML = "function bar () {}";
-//        hljs.highlightBlock(document.getElementById('__code'));
-//    }
-//    setTimeout(foo, 1000);
-</script>
 
 <script>
 /*

@@ -12,6 +12,8 @@
 //            console.log(event.data);
             document.getElementById('__code').innerHTML = event.data;
             hljs.highlightBlock(document.getElementById('__code'));
+
+            window.scrollTo(0, document.getElementById('__code').scrollHeight);
         });
 
     </script>
@@ -21,18 +23,9 @@
 <div class="container">
 <pre><code class="javascript" id="__code">
     function foo () {
-
     }
 </code></pre>
 </div>
-
-<script>
-//    function foo () {
-//        document.getElementById('__code').innerHTML = "function bar () {}";
-//        hljs.highlightBlock(document.getElementById('__code'));
-//    }
-//    setTimeout(foo, 1000);
-</script>
 
 </body>
 </html>

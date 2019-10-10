@@ -21,8 +21,11 @@ let diffFiles = {};
 let displayedDiffs = [];
 
 let diffTable = diffDoc.getElementById('diffTable');
-diffTable.innerHTML = '';
-for (let i = 0; i < 100/*diffs.length*/; i ++) {
+// diffTable.innerHTML = '';
+let diffTableBody = diffTable.getElementsByTagName('tbody')[0];
+diffTableBody.innerHTML = '';
+
+for (let i = 0; i < diffs.length; i ++) {
     createDiffCell(i);
 
     let diffCode = getCodeByLocation(diffs[i]);
@@ -40,7 +43,8 @@ function createDiffCell (i) {
     newCell.id = i; //'diff' + i;
     newCell.className = 'cell';
     newRow.appendChild(newCell);
-    diffTable.appendChild(newRow);
+    // diffTable.appendChild(newRow);
+    diffTableBody.appendChild(newRow);
 }
 
 // let diffsForVis = 'let __diffs = ' + JSON.stringify(diffs) + ';';
@@ -91,7 +95,7 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
     let highlightedLines = [];
 
     for (let i = startLineItr; i <= endLine; i ++) {
-        console.log(i);
+        console.log('** highlighted: ' + i);
         highlightedLines.push(i);
 
 
@@ -127,6 +131,10 @@ function getCode (filePath, startLine, startCol, endLine, endCol) {
 }
 
 function getCodeByLocation (diff) {
+    if (typeof diff === 'undefined') {
+        console.log(diff);
+    }
+
     let callerPath = diff.caller.fullPath;
 
     let callerStartLine = Number(diff.caller.start.line) - 1;
